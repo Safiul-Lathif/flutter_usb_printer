@@ -61,8 +61,13 @@ class FlutterUsbPrinter {
   /// [write]
   /// write data byte
   Future<bool?> write(Uint8List data) async {
-    Map<String, dynamic> params = {"data": data};
-    final bool? result = await _channel.invokeMethod('write', params);
-    return result;
+    try {
+      final Map<String, dynamic> params = {'data': data};
+      final bool? result = await _channel.invokeMethod<bool>('write', params);
+      return result;
+    } on PlatformException catch (e) {
+      print('Error writing data to USB printer: ${e.message}');
+      return null;
+    }
   }
 }
